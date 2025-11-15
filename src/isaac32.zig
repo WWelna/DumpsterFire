@@ -21,6 +21,7 @@
 const std = @import("std");
 
 const isaac32 = struct {
+    const Self = @This();
     randrsl: [256]u32,
     mm: [256]u32,
     randcnt: u32,
@@ -28,7 +29,7 @@ const isaac32 = struct {
     bb: u32,
     cc: u32,
 
-    pub fn init() isaac32 {
+    pub fn init() Self {
         return .{ .randrsl = std.mem.zeroes([256]u32), .mm = std.mem.zeroes([256]u32), .randcnt = 0, .aa = 0, .bb = 0, .cc = 0 };
     }
 
@@ -59,7 +60,7 @@ const isaac32 = struct {
         a.* +%= b.*;
     }
 
-    fn randinit(self: *isaac32, flag: bool) void {
+    fn randinit(self: *Self, flag: bool) void {
         var i: usize = 0;
         var a: u32 = 0x9e3779b9;
         var b: u32 = 0x9e3779b9;
@@ -72,7 +73,7 @@ const isaac32 = struct {
 
         for (0..4) |t| {
             _ = t;
-            isaac32.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+            Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
         }
 
         while (i < 255) : (i += 8) {
@@ -86,7 +87,7 @@ const isaac32 = struct {
                 g +%= self.randrsl[i + 6];
                 h +%= self.randrsl[i + 7];
             }
-            isaac32.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+            Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
             self.mm[i] = a;
             self.mm[i + 1] = b;
             self.mm[i + 2] = c;
@@ -108,7 +109,7 @@ const isaac32 = struct {
                 f +%= self.mm[i + 5];
                 g +%= self.mm[i + 6];
                 h +%= self.mm[i + 7];
-                isaac32.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+                Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
                 self.mm[i] = a;
                 self.mm[i + 1] = b;
                 self.mm[i + 2] = c;
@@ -123,7 +124,7 @@ const isaac32 = struct {
         self.isaac();
     }
 
-    fn isaac(self: *isaac32) void {
+    fn isaac(self: *Self) void {
         var i: u32 = 0;
         var x: u32 = 0;
         var y: u32 = 0;
@@ -148,7 +149,7 @@ const isaac32 = struct {
         }
     }
 
-    pub fn u8Seed(self: *isaac32, seed: []const u8, flag: bool) void {
+    pub fn u8Seed(self: *Self, seed: []const u8, flag: bool) void {
         var i: u32 = 0;
         while (i < 255) : (i += 1) {
             if (i > seed.len - 1) self.randrsl[i] = 0 else self.randrsl[i] = seed[i];
@@ -156,7 +157,7 @@ const isaac32 = struct {
         self.randinit(flag);
     }
 
-    pub fn randSeed(self: *isaac32) [255]u32 {
+    pub fn randSeed(self: *Self) [255]u32 {
         var r: [255]u32 = undefined;
         for (&self.randrsl, &r) |*x, *y| {
             y.* = std.crypto.random.int(u32);
@@ -166,15 +167,15 @@ const isaac32 = struct {
         return r;
     }
 
-    pub fn u8Random(self: *isaac32) u8 {
+    pub fn u8Random(self: *Self) u8 {
         return @as(u8, @intCast(self.u32Random() % std.math.maxInt(u8)));
     }
 
-    pub fn u16Random(self: *isaac32) u16 {
+    pub fn u16Random(self: *Self) u16 {
         return @as(u16, @intCast(self.u32Random() % std.math.maxInt(u16)));
     }
 
-    pub fn u32Random(self: *isaac32) u32 {
+    pub fn u32Random(self: *Self) u32 {
         const r = self.randrsl[self.randcnt];
         self.randcnt += 1;
         if (self.randcnt > 255) {
@@ -184,11 +185,11 @@ const isaac32 = struct {
         return r;
     }
 
-    pub fn u64Random(self: *isaac32) u64 {
+    pub fn u64Random(self: *Self) u64 {
         return (@as(u64, self.u32Random()) << 32) | @as(u64, self.u32Random());
     }
 
-    pub fn asciiRand(self: *isaac32) u8 {
+    pub fn asciiRand(self: *Self) u8 {
         return @as(u8, @intCast(self.u32Random() % 95 + 32));
     }
 };

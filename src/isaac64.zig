@@ -24,6 +24,7 @@
 const std = @import("std");
 
 const isaac64 = struct {
+    const Self = @This();
     randrsl: [256]u64,
     mm: [256]u64,
     randcnt: u64,
@@ -31,7 +32,7 @@ const isaac64 = struct {
     bb: u64,
     cc: u64,
 
-    pub fn init() isaac64 {
+    pub fn init() Self {
         return .{ .randrsl = std.mem.zeroes([256]u64), .mm = std.mem.zeroes([256]u64), .randcnt = 0, .aa = 0, .bb = 0, .cc = 0 };
     }
 
@@ -62,7 +63,7 @@ const isaac64 = struct {
         g.* +%= h.*;
     }
 
-    fn randinit(self: *isaac64, flag: bool) void {
+    fn randinit(self: *Self, flag: bool) void {
         var i: usize = 0;
         var a: u64 = 0x9e3779b97f4a7c13;
         var b: u64 = 0x9e3779b97f4a7c13;
@@ -75,7 +76,7 @@ const isaac64 = struct {
 
         for (0..4) |t| {
             _ = t;
-            isaac64.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+            Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
         }
 
         while (i < 255) : (i += 8) {
@@ -89,7 +90,7 @@ const isaac64 = struct {
                 g +%= self.randrsl[i + 6];
                 h +%= self.randrsl[i + 7];
             }
-            isaac64.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+            Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
             self.mm[i] = a;
             self.mm[i + 1] = b;
             self.mm[i + 2] = c;
@@ -111,7 +112,7 @@ const isaac64 = struct {
                 f +%= self.mm[i + 5];
                 g +%= self.mm[i + 6];
                 h +%= self.mm[i + 7];
-                isaac64.mix(&a, &b, &c, &d, &e, &f, &g, &h);
+                Self.mix(&a, &b, &c, &d, &e, &f, &g, &h);
                 self.mm[i] = a;
                 self.mm[i + 1] = b;
                 self.mm[i + 2] = c;
@@ -126,7 +127,7 @@ const isaac64 = struct {
         self.isaac();
     }
 
-    inline fn step(self: *isaac64, sugar: u64, i: u64) void {
+    inline fn step(self: *Self, sugar: u64, i: u64) void {
         const x: u64 = self.mm[i];
         self.aa = sugar +% self.mm[(i + 128) % 256];
 
@@ -135,7 +136,7 @@ const isaac64 = struct {
         self.randrsl[i] = self.bb;
     }
 
-    fn isaac(self: *isaac64) void {
+    fn isaac(self: *Self) void {
         var i: u64 = undefined;
         self.cc +%= 1;
         self.bb +%= self.cc;
@@ -149,7 +150,7 @@ const isaac64 = struct {
         }
     }
 
-    pub fn u8Seed(self: *isaac64, seed: []const u8, flag: bool) void {
+    pub fn u8Seed(self: *Self, seed: []const u8, flag: bool) void {
         var i: u64 = 0;
         while (i < 255) : (i += 1) {
             if (i > seed.len - 1) self.randrsl[i] = 0 else self.randrsl[i] = seed[i];
@@ -157,7 +158,7 @@ const isaac64 = struct {
         self.randinit(flag);
     }
 
-    pub fn randSeed(self: *isaac64) [255]u64 {
+    pub fn randSeed(self: *Self) [255]u64 {
         var r: [255]u64 = undefined;
         for (&self.randrsl, &r) |*x, *y| {
             y.* = std.crypto.random.int(u64);
@@ -167,19 +168,19 @@ const isaac64 = struct {
         return r;
     }
 
-    pub fn u8Random(self: *isaac64) u8 {
+    pub fn u8Random(self: *Self) u8 {
         return @as(u8, @intCast(self.u64Random() % std.math.maxInt(u8)));
     }
 
-    pub fn u16Random(self: *isaac64) u16 {
+    pub fn u16Random(self: *Self) u16 {
         return @as(u16, @intCast(self.u64Random() % std.math.maxInt(u16)));
     }
 
-    pub fn u32Random(self: *isaac64) u32 {
+    pub fn u32Random(self: *Self) u32 {
         return @as(u32, @intCast(self.u64Random() % std.math.maxInt(u32)));
     }
 
-    pub fn u64Random(self: *isaac64) u64 {
+    pub fn u64Random(self: *Self) u64 {
         const r = self.randrsl[self.randcnt];
         self.randcnt += 1;
         if (self.randcnt > 255) {
@@ -189,7 +190,7 @@ const isaac64 = struct {
         return r;
     }
 
-    pub fn asciiRand(self: *isaac64) u8 {
+    pub fn asciiRand(self: *Self) u8 {
         return @as(u8, @intCast(self.u64Random() % 95 + 32));
     }
 };
