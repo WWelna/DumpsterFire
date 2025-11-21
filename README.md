@@ -13,4 +13,8 @@ This is a continuation of my old project from [Java](https://github.com/WWelna/C
 * Isaac32
 * Isaac64
 
+### Hash Functions
+* fnv1 32/64 bit
+* fnv1a 32/64 bit
+
 ### Compression Algorithms
