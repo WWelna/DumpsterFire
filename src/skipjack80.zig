@@ -68,7 +68,7 @@ const SkipJack = struct {
             klu[x][2] = k[((x << 2) +% 2) % 10];
             klu[x][3] = k[((x << 2) +% 3) % 10];
         }
-        return SkipJack{ .key = k, .key_lookup = klu };
+        return Self{ .key = k, .key_lookup = klu };
     }
 
     pub fn block_encrypt(self: *Self, block: [8]u8) [8]u8 {
