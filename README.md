@@ -8,6 +8,7 @@ This is a continuation of my old project from [Java](https://github.com/WWelna/C
 * SkipJack
 * Skip32
 * Blowfish
+* TEA
 
 ### Random Number Generators
 * Isaac32
