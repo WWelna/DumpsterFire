@@ -9,6 +9,8 @@ This is a continuation of my old project from [Java](https://github.com/WWelna/C
 * Skip32
 * Blowfish
 * TEA
+* XTEA
+* XXTEA
 
 ### Random Number Generators
 * Isaac32
@@ -17,5 +19,8 @@ This is a continuation of my old project from [Java](https://github.com/WWelna/C
 ### Hash Functions
 * fnv1 32/64 bit
 * fnv1a 32/64 bit
+* CRC32
+* CRC64
+* Adler32
 
 ### Compression Algorithms
