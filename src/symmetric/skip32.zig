@@ -128,4 +128,9 @@ const Skip32 = struct {
 
         return (@as(u32, @intCast(wl)) << 16) | @as(u32, @intCast(wh));
     }
+
+    pub fn deinit(self: *Self) void {
+        self.key = std.mem.zeroes([10]u8);
+        self.key_lookup = std.mem.zeroes([24][4]u8);
+    }
 };

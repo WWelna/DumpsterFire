@@ -168,6 +168,10 @@ const isaac64 = struct {
         return r;
     }
 
+    pub fn drop(self: *Self, count: usize) void {
+        for (0..count) |_| _ = self.u64Random();
+    }
+
     pub fn u8Random(self: *Self) u8 {
         return @as(u8, @intCast(self.u64Random() % std.math.maxInt(u8)));
     }
@@ -192,5 +196,14 @@ const isaac64 = struct {
 
     pub fn asciiRand(self: *Self) u8 {
         return @as(u8, @intCast(self.u64Random() % 95 + 32));
+    }
+
+    pub fn deinit(self: *Self) void {
+        self.randrsl = std.mem.zeroes([256]u64);
+        self.mm = std.mem.zeroes([256]u64);
+        self.aa = 0;
+        self.bb = 0;
+        self.cc = 0;
+        self.randcnt = 0;
     }
 };

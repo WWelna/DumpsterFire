@@ -86,4 +86,9 @@ const XXTEA = struct {
 
         return val;
     }
+
+    pub fn denint(self: *Self) void {
+        self.key = 0;
+        self.k = std.mem.zeroes([4]u32);
+    }
 };

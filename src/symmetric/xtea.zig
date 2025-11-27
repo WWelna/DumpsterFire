@@ -72,4 +72,10 @@ const XTEA = struct {
 
         return (@as(u64, @intCast(valh)) << 32) | @as(u64, @intCast(vall));
     }
+
+    pub fn denint(self: *Self) void {
+        self.key = 0;
+        self.k = std.mem.zeroes([4]u32);
+        self.rounds = 0;
+    }
 };

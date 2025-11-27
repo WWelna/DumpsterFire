@@ -184,4 +184,9 @@ const SkipJack = struct {
 
         return ret;
     }
+
+    pub fn deinit(self: *Self) void {
+        self.key = std.mem.zeroes([10]u8);
+        self.key_lookup = std.mem.zeroes([32][4]u8);
+    }
 };

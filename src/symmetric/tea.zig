@@ -78,4 +78,12 @@ const TEA = struct {
 
         return (@as(u64, @intCast(valh)) << 32) | @as(u64, @intCast(vall));
     }
+
+    pub fn denint(self: *Self) void {
+        self.k1 = 0;
+        self.k2 = 0;
+        self.k3 = 0;
+        self.k4 = 0;
+        self.key = 0;
+    }
 };
